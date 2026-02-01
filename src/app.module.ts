@@ -8,11 +8,25 @@ import { PaymentModule } from './payment/payment.module';
 import { WechatModule } from './wechat/wechat.module';
 import { StsModule } from './sts/sts.module';
 import { UserModule } from './user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'secret-key',
-      signOptions: {expiresIn: '24h'}
+    ConfigModule.forRoot({
+      envFilePath: `.env.development`,
+      isGlobal: true,
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: '7d',
+          }
+        }
+      },
+      inject: [ConfigService],
+      global: true,
     }),
     MongooseModule.forRoot('mongodb://localhost:27017/aichat'),
     InterviewModule,
