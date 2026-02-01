@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schemas';
 import { Model } from 'mongoose';
@@ -48,6 +48,14 @@ export class UserService {
       token,
       user: userInfo
     }
+  }
 
+  async getUserInfo(userId: string) {
+    const user = await this.userModel.findById(userId).lean() as any;
+    if (!user) {
+      throw new NotFoundException('用户不存在');
+    }
+    delete user.password;
+    return user;
   }
 }

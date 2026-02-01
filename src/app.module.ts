@@ -9,12 +9,15 @@ import { WechatModule } from './wechat/wechat.module';
 import { StsModule } from './sts/sts.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './auth/jwt.strategy';
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.env.development`,
       isGlobal: true,
     }),
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
@@ -36,6 +39,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     UserModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}
