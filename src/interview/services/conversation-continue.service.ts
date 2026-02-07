@@ -1,9 +1,10 @@
 import { PromptTemplate } from "@langchain/core/prompts";
-import { Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { Message } from "src/ai/interfaces/message.interface";
 import { AiModelFactory } from "src/ai/services/ai-model.factory";
 import { CONVERSATION_CONTINUATION_PROMPT } from "../resume.quiz.prompts";
 
+@Injectable()
 export class ConversationContinueService {
     private readonly logger = new Logger(ConversationContinueService.name);
 

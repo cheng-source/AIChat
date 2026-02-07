@@ -1,6 +1,6 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { SchemaTypes, Types } from "mongoose";
-import { User } from "src/user/user.schemas";
+import { User } from "src/user/schemas/user.schemas";
 
 
 export type ConsumptionRecordDocument = ConsumptionRecord & Document;
@@ -18,7 +18,7 @@ export enum ConsumptionStatus {
   FAILED = 'failed',
   CANCELLED = 'cancelled',
 }
-
+@Schema()
 export class ConsumptionRecord {
 
   @Prop({required: true, unique: true})

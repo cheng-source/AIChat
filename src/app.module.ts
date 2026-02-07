@@ -11,6 +11,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.strategy';
+import { AIModule } from './ai/ai.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -36,7 +37,8 @@ import { JwtStrategy } from './auth/jwt.strategy';
     PaymentModule,
     WechatModule,
     StsModule,
-    UserModule
+    UserModule,
+    AIModule
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

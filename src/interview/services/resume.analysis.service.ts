@@ -1,9 +1,10 @@
 import { PromptTemplate } from "@langchain/core/prompts";
-import { Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { AiModelFactory } from "src/ai/services/ai-model.factory";
 import { RESUME_ANALYSIS_PROMPT } from "../resume.quiz.prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 
+@Injectable()
 export class ResumeAnalysisService {
     private readonly logger = new Logger(ResumeAnalysisService.name);
     constructor(private aiModelFactory: AiModelFactory) {}
@@ -11,7 +12,6 @@ export class ResumeAnalysisService {
     async analyze(resumeContent: string, jobDescription: string) {
 
         const propmt = PromptTemplate.fromTemplate(RESUME_ANALYSIS_PROMPT);
-
         const model = this.aiModelFactory.createDefaultModel();
 
         const parser = new JsonOutputParser();

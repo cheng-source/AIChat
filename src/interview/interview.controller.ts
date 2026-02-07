@@ -1,9 +1,9 @@
-import { Body, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
 import { InterviewService } from "./services/interview.service";
 import { ResponseUtil } from "src/common/utils/response.util";
 import { JwtAuthGuard } from "src/auth/jwt.auth.guard";
 
-
+@Controller('interview')
 export class InterviewController {
 
     constructor(private interViewService: InterviewService) {}
