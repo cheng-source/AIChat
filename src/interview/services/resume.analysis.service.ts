@@ -1,7 +1,7 @@
 import { PromptTemplate } from "@langchain/core/prompts";
 import { Injectable, Logger } from "@nestjs/common";
 import { AiModelFactory } from "src/ai/services/ai-model.factory";
-import { RESUME_ANALYSIS_PROMPT } from "../resume.quiz.prompts";
+import { RESUME_ANALYSIS_PROMPT } from "../prompts/resume.quiz.prompts";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 
 @Injectable()

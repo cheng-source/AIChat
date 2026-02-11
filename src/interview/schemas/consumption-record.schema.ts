@@ -56,6 +56,7 @@ export class ConsumptionRecord {
   @Prop({ required: true })
   consumedCount: number; // 消费的次数（通常为1）
 
+
   @Prop()
   description?: string; // 消费描述
 

@@ -2,7 +2,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { Injectable, Logger } from "@nestjs/common";
 import { Message } from "src/ai/interfaces/message.interface";
 import { AiModelFactory } from "src/ai/services/ai-model.factory";
-import { CONVERSATION_CONTINUATION_PROMPT } from "../resume.quiz.prompts";
+import { CONVERSATION_CONTINUATION_PROMPT } from "../prompts/resume.quiz.prompts";
 
 @Injectable()
 export class ConversationContinueService {
