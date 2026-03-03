@@ -10,7 +10,7 @@ import { UpdateUserDto } from './dto/update.dto';
 
 @ApiTags('用户')
 @Controller('user')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

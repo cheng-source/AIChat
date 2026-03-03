@@ -25,7 +25,9 @@ export class UserService {
   // 注册
   async register(register: RegisterDto) {
     const {username, email, password} = register;
+    console.log(register)
     const exitingUser = await this.userModel.findOne({ $or: [{username}, {email}]})
+    console.log(exitingUser)
     if (exitingUser) {
       throw new BadRequestException('用户名或邮箱已存在');
     }

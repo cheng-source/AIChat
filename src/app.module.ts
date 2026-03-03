@@ -1,7 +1,8 @@
+import { MetricsModule } from './common/metrics/metrics.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import {JwtModule} from '@nestjs/jwt'
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { InterviewModule } from './interview/interview.module';
 import { PaymentModule } from './payment/payment.module';
@@ -12,8 +13,25 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.strategy';
 import { AIModule } from './ai/ai.module';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MetricsInterceptor } from './common/interceptor/metrics.interceptor';
+
 @Module({
   imports: [
+    MetricsModule,
+    WinstonModule.forRoot({
+      format: winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.ms(),
+        winston.format.json(),
+      ),
+      defaultMeta: {
+        service: 'aichat-server',
+      },
+      transports: [new winston.transports.Console()],
+    }),
     ConfigModule.forRoot({
       envFilePath: `.env.development`,
       isGlobal: true,
@@ -26,8 +44,8 @@ import { AIModule } from './ai/ai.module';
           secret: configService.get<string>('JWT_SECRET'),
           signOptions: {
             expiresIn: '7d',
-          }
-        }
+          },
+        };
       },
       inject: [ConfigService],
       global: true,
@@ -38,9 +56,16 @@ import { AIModule } from './ai/ai.module';
     WechatModule,
     StsModule,
     UserModule,
-    AIModule
+    AIModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy],
+  providers: [
+    AppService,
+    JwtStrategy,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricsInterceptor,
+    },
+  ],
 })
 export class AppModule {}

@@ -54,4 +54,8 @@ export class ResumeQuizDto {
   @IsString()
   @IsOptional()
   promptVersion?: string
+
+  @IsString()
+  @IsOptional()
+  resumeURL?: string
 }
