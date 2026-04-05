@@ -20,12 +20,6 @@ import {
 export class InterviewController {
   constructor(private interViewService: InterviewService) {}
 
-  // async analyzeResume(@Body() body: {resume: string, jobDescription: string}) {
-  //     const result = await this.interViewService.analyzeResume(body.resume, body.jobDescription);
-
-  //     return ResponseUtil.success(result, '简历分析完成');
-  // }
-
   @Post('/analyze-resume')
   @UseGuards(JwtAuthGuard)
   async analyzeResume(

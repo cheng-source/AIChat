@@ -77,7 +77,7 @@ export class InterviewAiService {
   constructor(
     private readonly configService: ConfigService,
     private aiModelFactory: AiModelFactory,
-  ) {}
+  ) { }
 
   // 生成简历押题
   async generateResumeQuizQuestionOnly(
@@ -123,9 +123,9 @@ export class InterviewAiService {
         throw new Error('AI返回的结果，questions不是数组');
       }
 
-      if (rawResult.questions.length < 10) {
+      if (rawResult.questions.length < 3) {
         throw new Error(
-          `AI 返回的问题数量不足： ${rawResult.questions.length}(应至少10个)`,
+          `AI 返回的问题数量不足： ${rawResult.questions.length}(应至少3个)`,
         );
       }
 

@@ -69,8 +69,8 @@ export class StartMockInterviewDto {
     example: 20,
     required: false,
   })
-  @Min(0, { message: '最低薪资不能小于0' })
-  @Max(9999, { message: '最低薪资不能超过9999K' })
+  // @Min(0, { message: '最低薪资不能小于0' })
+  // @Max(9999, { message: '最低薪资不能超过9999K' })
   @IsOptional()
   minSalary?: number | string;
 
@@ -79,8 +79,8 @@ export class StartMockInterviewDto {
     example: 35,
     required: false,
   })
-  @Min(0, { message: '最高薪资不能小于0' })
-  @Max(9999, { message: '最高薪资不能超过9999K' })
+  // @Min(0, { message: '最高薪资不能小于0' })
+  // @Max(9999, { message: '最高薪资不能超过9999K' })
   @IsOptional()
   maxSalary?: number | string;
 
@@ -94,6 +94,10 @@ export class StartMockInterviewDto {
   @IsOptional()
   @MaxLength(5000, { message: '职位描述不能超过5000个字符' })
   jd?: string;
+
+  @IsString()
+  @IsOptional()
+  objectName: string;
 
   @ApiProperty({
     description: '简历ID（从简历列表中选择）',

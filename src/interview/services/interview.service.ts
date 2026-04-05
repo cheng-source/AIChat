@@ -33,7 +33,7 @@ import {
 } from '../schemas/interview-quiz-result.schema';
 import { User, UserDocument } from 'src/user/schemas/user.schemas';
 import { DocumentParseService } from './documentParseService';
-import { MinioService } from './minio.service';
+import { MinioService } from '../../resume/minio.service';
 import { InterviewAiService } from './interview.ai.service';
 import {
   MockInterviewEventDto,
@@ -556,6 +556,46 @@ export class InterviewService {
       // 查询
     }
 
+    if (dto.objectName) {
+      const rawText = await this.documentParserService.parseDocumentFromMinio(
+        dto.objectName,
+      );
+
+      const cleanedText = this.documentParserService.cleanText(rawText);
+
+      const validation =
+        this.documentParserService.validateResumeContent(cleanedText);
+
+      if (!validation.isValid) {
+        throw new BadRequestException(validation.reason);
+      }
+
+      if (validation.warning && validation.warning.length > 0) {
+        this.logger.log(`简历解析警告: ${validation.warning.join('; ')}`);
+      }
+
+      const estimatedTokens =
+        this.documentParserService.estimateTokens(cleanedText);
+
+      if (estimatedTokens > 6000) {
+        this.logger.warn(`简历内容过长，${estimatedTokens}tokens, 将进行截断`);
+
+        const maxChars = 1000 * 1.5;
+        const truncatedText = cleanedText.substring(0, maxChars);
+
+        this.logger.log(
+          `简历已经截断：原长度= ${estimatedTokens}, 截断后=${maxChars}，tokens=${this.documentParserService.estimateTokens(truncatedText)}`,
+        );
+
+        return truncatedText;
+      }
+
+      this.logger.log(
+        `简历解析成功: 长度=${cleanedText.length}, tokens= ${estimatedTokens}`,
+      );
+      return cleanedText;
+    }
+
     if (dto.resumeURL) {
       try {
         const rawText = await this.documentParserService.parseDocumentFromUrl(
@@ -678,6 +718,7 @@ export class InterviewService {
       );
 
       const resumeContent = await this.extractResumeContent(userId, {
+        objectName: dto.objectName,
         resumeId: dto.resumeId,
         resumeContent: dto.resumeContent,
       } as any);

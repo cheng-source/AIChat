@@ -1,3 +1,4 @@
+import { ResumeModule } from './resume/resume.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -20,6 +21,7 @@ import { MetricsInterceptor } from './common/interceptor/metrics.interceptor';
 
 @Module({
   imports: [
+    ResumeModule,
     MetricsModule,
     WinstonModule.forRoot({
       format: winston.format.combine(

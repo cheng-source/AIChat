@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schemas/user.schemas';
 import { Model } from 'mongoose';
@@ -9,29 +14,32 @@ import {
   ConsumptionRecord,
   ConsumptionRecordDocument,
 } from '../interview/schemas/consumption-record.schema';
-import { UserConsumption, UserConsumptionDocument } from './schemas/consumption-record.schema';
+import {
+  UserConsumption,
+  UserConsumptionDocument,
+} from './schemas/consumption-record.schema';
 import { UpdateUserDto } from './dto/update.dto';
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-   private readonly JwtService: JwtService,
-   @InjectModel(ConsumptionRecord.name)
-   private conpsumptionRecordModel: Model<ConsumptionRecordDocument>,
-   @InjectModel(UserConsumption.name)
-  private consumptionModel: Model<UserConsumptionDocument>,
-
+    private readonly JwtService: JwtService,
+    @InjectModel(ConsumptionRecord.name)
+    private conpsumptionRecordModel: Model<ConsumptionRecordDocument>,
+    @InjectModel(UserConsumption.name)
+    private consumptionModel: Model<UserConsumptionDocument>,
   ) {}
   // 注册
   async register(register: RegisterDto) {
-    const {username, email, password} = register;
-    console.log(register)
-    const exitingUser = await this.userModel.findOne({ $or: [{username}, {email}]})
-    console.log(exitingUser)
+    const { username, email, password } = register;
+    const exitingUser = await this.userModel.findOne({
+      $or: [{ username }, { email }],
+    });
+    console.log(exitingUser);
     if (exitingUser) {
       throw new BadRequestException('用户名或邮箱已存在');
     }
-    const newUser = new this.userModel({username, email, password});
+    const newUser = new this.userModel({ username, email, password });
     await newUser.save();
     const result = newUser.toObject() as any;
     delete result.password;
@@ -39,20 +47,20 @@ export class UserService {
   }
   // 登录
   async login(loginDto: LoginDto) {
-    const {email, password} = loginDto;
+    const { email, password } = loginDto;
 
-    const user = await this.userModel.findOne({email}) as UserDocument;
+    const user = (await this.userModel.findOne({ email })) as UserDocument;
     if (!user) {
       throw new UnauthorizedException('邮箱或密码不正确');
     }
-    const isPasswordValid = await user.comparePassword(password) ;
+    const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('邮箱或密码不正确');
     }
     const token = this.JwtService.sign({
       userId: user._id.toString(),
       username: user.username,
-      email: user.email
+      email: user.email,
     });
 
     const userInfo = user.toObject() as any;
@@ -61,12 +69,12 @@ export class UserService {
 
     return {
       token,
-      user: userInfo
-    }
+      user: userInfo,
+    };
   }
   // 获取用户信息
   async getUserInfo(userId: string) {
-    const user = await this.userModel.findById(userId).lean() as any;
+    const user = (await this.userModel.findById(userId).lean()) as any;
     if (!user) {
       throw new NotFoundException('用户不存在');
     }
@@ -74,7 +82,7 @@ export class UserService {
     return user;
   }
 
-    /**
+  /**
    * 创建消费记录
    */
   async createConsumptionRecord(
@@ -95,7 +103,10 @@ export class UserService {
     return await record.save();
   }
 
-  async getUserConsumptionRecords(userId: string, options?: {skip?: number; limit?: number}) {
+  async getUserConsumptionRecords(
+    userId: string,
+    options?: { skip?: number; limit?: number },
+  ) {
     const skip = options?.skip || 0;
     const limit = options?.limit || 20;
     // 查询消费记录，按创建时间降序排列，跳过skip条记录，限制返回limit条记录
@@ -122,16 +133,15 @@ export class UserService {
           totalCost: { $sum: '$estimatedCost' }, // 计算每种类型的消费总额
         },
       },
-    ])
+    ]);
     // 返回查询的消费记录和消费统计信息
     return {
       records, // 用户的消费记录
       stats, // 按消费类型分组后的统计信息
     };
-  
   }
 
-    async updateUser(userId: string, updateUserDto: UpdateUserDto) {
+  async updateUser(userId: string, updateUserDto: UpdateUserDto) {
     // 如果更新邮箱，检查邮箱是否已被使用
     if (updateUserDto.email) {
       const existingUser = await this.userModel.findOne({
@@ -144,9 +154,13 @@ export class UserService {
       }
     }
 
-    const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, {
-      new: true,
-    }) as any;
+    const user = (await this.userModel.findByIdAndUpdate(
+      userId,
+      updateUserDto,
+      {
+        new: true,
+      },
+    )) as any;
 
     if (!user) {
       throw new NotFoundException('用户不存在');
